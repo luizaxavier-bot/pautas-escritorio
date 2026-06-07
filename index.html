@@ -1,1 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pauta de Audiências</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F6F2; --surface: #FFFFFF; --border: #E2E0D8; --border-strong: #C8C5BB;
+  --text: #1A1916; --text-muted: #7A7870; --accent: #1B4F3A; --accent-light: #E8F0EC; --accent-text: #1B4F3A;
+  --warn-bg: #FEF6E4; --warn-border: #F5C842; --warn-text: #7A5A00;
+  --danger-bg: #FEF0EF; --danger-border: #E8857E; --danger-text: #8B1F1A;
+  --success-bg: #EBF5EE; --success-border: #6BBF87; --success-text: #1B5E35;
+  --info-bg: #EEF3FB; --info-border: #7AAAE8; --info-text: #1A3D7A;
+  --radius: 8px; --radius-lg: 12px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+.app { display: flex; min-height: 100vh; }
+.sidebar { width: 220px; background: var(--surface); border-right: 1px solid var(--border); padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 4px; position: fixed; top: 0; left: 0; height: 100vh; }
+.sidebar-logo { font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: .04em; text-transform: uppercase; padding: 0 8px 1.25rem; border-bottom: 1px solid var(--border); margin-bottom: .5rem; }
+.nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: var(--radius); cursor: pointer; font-size: 13px; color: var(--text-muted); transition: all .15s; border: none; background: none; width: 100%; text-align: left; }
+.nav-item:hover { background: var(--bg); color: var(--text); }
+.nav-item.active { background: var(--accent-light); color: var(--accent-text); font-weight: 500; }
+.nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.main { margin-left: 220px; flex: 1; padding: 2rem; max-width: 960px; }
+.page { display: none; } .page.active { display: block; }
+.page-title { font-size: 20px; font-weight: 600; margin-bottom: 1.5rem; }
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; }
+.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin-bottom: 6px; }
+.stat-value { font-size: 26px; font-weight: 600; font-family: var(--mono); }
+.stat-value.warn { color: #B07D00; } .stat-value.ok { color: var(--success-text); }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 12px; }
+.card-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); margin-bottom: 1rem; }
+.form-group { margin-bottom: 14px; }
+.form-row { display: grid; gap: 12px; }
+.form-row.col2 { grid-template-columns: 1fr 1fr; } .form-row.col3 { grid-template-columns: 1fr 1fr 1fr; }
+label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
+input, select, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 11px; font-size: 13px; font-family: var(--font); color: var(--text); transition: border .15s; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+textarea { resize: vertical; min-height: 64px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 13px; font-family: var(--font); color: var(--text); transition: all .15s; font-weight: 500; }
+.btn:hover { background: var(--bg); }
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover { background: #143d2c; }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-danger { color: var(--danger-text); border-color: var(--danger-border); }
+.btn-danger:hover { background: var(--danger-bg); }
+.btn-success { color: var(--success-text); border-color: var(--success-border); }
+.btn-success:hover { background: var(--success-bg); }
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1rem; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; }
+.badge-warn { background: var(--warn-bg); color: var(--warn-text); border: 1px solid var(--warn-border); }
+.badge-ok { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
+.badge-info { background: var(--info-bg); color: var(--info-text); border: 1px solid var(--info-border); }
+.badge-gray { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+.badge-tel { background: #FFF0E6; color: #8B3A00; border: 1px solid #F5A66A; }
+.aud-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem 1.4rem; margin-bottom: 10px; }
+.aud-card.pendente { border-left: 3px solid var(--warn-border); }
+.aud-card.feito { border-left: 3px solid var(--success-border); }
+.aud-card.nao-aplica { border-left: 3px solid var(--border-strong); }
+.aud-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.aud-proc { font-family: var(--mono); font-size: 13px; font-weight: 500; }
+.aud-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.aud-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+.test-list { display: flex; flex-direction: column; gap: 6px; }
+.test-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.test-name { font-weight: 500; flex: 1; }
+.test-city { color: var(--text-muted); background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1px 7px; font-size: 11px; }
+.test-parte { color: var(--text-muted); font-size: 11px; }
+.test-form-area { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-top: 10px; }
+.test-added-row { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 5px; }
+.filter-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.filter-bar select, .filter-bar input { width: auto; }
+.conf-day-header { background: var(--accent); color: #fff; border-radius: var(--radius-lg); padding: 1rem 1.5rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+.conf-day-title { font-size: 15px; font-weight: 600; }
+.conf-day-sub { font-size: 12px; opacity: .8; margin-top: 2px; }
+.conf-resp-row { display: flex; align-items: center; gap: 8px; }
+.conf-resp-row label { margin: 0; color: rgba(255,255,255,.8); text-transform: none; letter-spacing: 0; font-size: 12px; }
+.conf-resp-row input { width: 160px; background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.3); color: #fff; }
+.conf-resp-row input::placeholder { color: rgba(255,255,255,.5); }
+.empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+.empty-icon { font-size: 32px; margin-bottom: 8px; opacity: .4; }
+.config-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 16px; }
+.config-section h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.config-section p { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.7; }
+.step-badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: var(--accent); color: #fff; border-radius: 50%; font-size: 11px; font-weight: 600; margin-right: 6px; flex-shrink: 0; }
+.step-row { display: flex; align-items: flex-start; gap: 4px; margin-bottom: 10px; font-size: 13px; }
+.step-text { flex: 1; color: var(--text-muted); line-height: 1.7; }
+.step-text strong { color: var(--text); }
+code { font-family: var(--mono); background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 12px; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+.status-dot.connected { background: #3DAB68; } .status-dot.disconnected { background: #ccc; }
+.conn-status { font-size: 13px; display: flex; align-items: center; padding: 8px 12px; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 12px; }
+.link { color: var(--accent); text-decoration: underline; cursor: pointer; font-size: 13px; }
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: #fff; padding: 10px 18px; border-radius: var(--radius); font-size: 13px; z-index: 9999; opacity: 0; transition: opacity .3s; pointer-events: none; max-width: 300px; }
+.toast.show { opacity: 1; }
+.loading-overlay { position: fixed; inset: 0; background: rgba(247,246,242,.8); display: flex; align-items: center; justify-content: center; z-index: 999; display: none; }
+.loading-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem 2rem; text-align: center; font-size: 13px; color: var(--text-muted); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; margin-bottom: 8px; }
+</style>
+</head>
+<body>
 
+<div class="loading-overlay" id="loading">
+  <div class="loading-box"><div class="spinner"></div><br>Carregando...</div>
+</div>
+
+<div class="app">
+<nav class="sidebar">
+  <div class="sidebar-logo">⚖ Pautas</div>
+  <button class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">◉</span> Painel</button>
+  <button class="nav-item" onclick="showPage('nova',this)"><span class="nav-icon">＋</span> Nova audiência</button>
+  <button class="nav-item" onclick="showPage('pautas',this)"><span class="nav-icon">≡</span> Todas as pautas</button>
+  <button class="nav-item" onclick="showPage('conferencia',this)"><span class="nav-icon">✓</span> Conferência do dia</button>
+  <button class="nav-item" onclick="showPage('config',this)" style="margin-top:auto"><span class="nav-icon">⚙</span> Configurar</button>
+</nav>
+
+<main class="main">
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page active">
+  <div class="page-title">Painel</div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Total de audiências</div><div class="stat-value" id="st-total">—</div></div>
+    <div class="stat-card"><div class="stat-label">Pedidos pendentes</div><div class="stat-value warn" id="st-pend">—</div></div>
+    <div class="stat-card"><div class="stat-label">Próximos 7 dias</div><div class="stat-value ok" id="st-prox">—</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Próximas audiências</div>
+    <div id="dash-list"></div>
+  </div>
+</div>
+
+<!-- NOVA AUDIÊNCIA -->
+<div id="page-nova" class="page">
+  <div class="page-title">Nova audiência</div>
+  <div class="card">
+    <div class="card-title">Dados do processo</div>
+    <div class="form-row col2">
+      <div class="form-group"><label>Número do processo</label><input type="text" id="n-proc" placeholder="0000000-00.0000.0.00.0000"></div>
+      <div class="form-group"><label>Tipo de audiência</label>
+        <select id="n-tipo"><option>Instrução e julgamento</option><option>Conciliação</option><option>UNA</option><option>Outro</option></select>
+      </div>
+    </div>
+    <div class="form-row col3">
+      <div class="form-group"><label>Data</label><input type="date" id="n-data"></div>
+      <div class="form-group"><label>Horário</label><input type="time" id="n-hora"></div>
+      <div class="form-group"><label>Comarca / cidade</label><input type="text" id="n-comarca" placeholder="Ex.: Salvador/BA" oninput="atualizarTelAlert()"></div>
+    </div>
+    <div class="form-row col2">
+      <div class="form-group"><label>Vara / juízo</label><input type="text" id="n-vara" placeholder="Ex.: 3ª Vara do Trabalho"></div>
+      <div class="form-group"><label>Advogado responsável</label><input type="text" id="n-adv" placeholder="Nome do advogado"></div>
+    </div>
+    <div class="form-group"><label>Parte / cliente</label><input type="text" id="n-cliente" placeholder="Nome do cliente"></div>
+    <div class="form-group"><label>Observações</label><textarea id="n-obs" placeholder="Notas gerais..."></textarea></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Testemunhas</div>
+    <div id="test-added-list"></div>
+    <div id="tel-alert" style="display:none;margin-bottom:10px" class="badge badge-tel">⚠ Testemunha fora da comarca — necessário pedido de oitiva telepresencial / SISDOV</div>
+    <div class="test-form-area">
+      <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted);margin-bottom:10px">Adicionar testemunha</div>
+      <div class="form-row col2">
+        <div class="form-group"><label>Nome completo</label><input type="text" id="t-nome" placeholder="Nome da testemunha"></div>
+        <div class="form-group"><label>CPF</label><input type="text" id="t-cpf" placeholder="000.000.000-00"></div>
+      </div>
+      <div class="form-row col3">
+        <div class="form-group"><label>Cidade / UF</label><input type="text" id="t-cidade" placeholder="Ex.: Jequié/BA" oninput="atualizarTelAlert()"></div>
+        <div class="form-group"><label>Telefone</label><input type="text" id="t-tel" placeholder="(00) 00000-0000"></div>
+        <div class="form-group"><label>Arrolada por</label><select id="t-parte"><option>Reclamante</option><option>Reclamada</option></select></div>
+      </div>
+      <button class="btn btn-sm" onclick="addTest()">＋ Adicionar</button>
+    </div>
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-primary" onclick="salvar()">Salvar audiência</button>
+    <button class="btn" onclick="limpar()">Limpar</button>
+  </div>
+</div>
+
+<!-- PAUTAS -->
+<div id="page-pautas" class="page">
+  <div class="page-title">Todas as pautas</div>
+  <div class="filter-bar">
+    <select id="f-status" onchange="renderPautas()">
+      <option value="">Todos os status</option>
+      <option value="pendente">Pedido pendente</option>
+      <option value="feito">Pedido feito</option>
+      <option value="nao-aplica">Sem necessidade</option>
+    </select>
+    <input type="text" id="f-busca" placeholder="Buscar processo ou cliente..." style="width:240px" oninput="renderPautas()">
+    <button class="btn btn-sm" onclick="carregarDados()">↺ Atualizar</button>
+  </div>
+  <div id="pautas-list"></div>
+</div>
+
+<!-- CONFERÊNCIA -->
+<div id="page-conferencia" class="page">
+  <div class="conf-day-header">
+    <div>
+      <div class="conf-day-title">Conferência do dia</div>
+      <div class="conf-day-sub" id="conf-data-label"></div>
+    </div>
+    <div class="conf-resp-row">
+      <label>Responsável:</label>
+      <input type="text" id="conf-resp" placeholder="Seu nome">
+    </div>
+  </div>
+  <div class="stats-grid" style="grid-template-columns:1fr 1fr">
+    <div class="stat-card"><div class="stat-label">Audiências (próx. 7 dias)</div><div class="stat-value" id="cf-qtd">—</div></div>
+    <div class="stat-card"><div class="stat-label">Ações pendentes</div><div class="stat-value warn" id="cf-pend">—</div></div>
+  </div>
+  <div id="conf-list"></div>
+</div>
+
+<!-- CONFIG -->
+<div id="page-config" class="page">
+  <div class="page-title">Configurar</div>
+
+  <div class="config-section">
+    <h3>Status da conexão</h3>
+    <div class="conn-status">
+      <span class="status-dot" id="conn-dot"></span>
+      <span id="conn-text">Não configurado</span>
+    </div>
+    <div class="form-group">
+      <label>URL do Google Apps Script (Web App)</label>
+      <input type="text" id="cfg-url" placeholder="https://script.google.com/macros/s/.../exec">
+    </div>
+    <div class="btn-group" style="margin-top:0">
+      <button class="btn btn-primary" onclick="salvarConfig()">Salvar e conectar</button>
+      <button class="btn" onclick="testarConexao()">Testar conexão</button>
+    </div>
+  </div>
+
+  <div class="config-section">
+    <h3>Passo a passo — configurar uma única vez (≈ 5 minutos)</h3>
+    <p>Sem OAuth, sem Client ID, sem erro 400. Funciona com qualquer conta Google.</p>
+
+    <div class="step-row"><span class="step-badge">1</span>
+      <div class="step-text">Abra sua planilha no Google Sheets. No menu superior clique em <strong>Extensões → Apps Script</strong>.</div>
+    </div>
+    <div class="step-row"><span class="step-badge">2</span>
+      <div class="step-text">Apague todo o código que já está lá (o <code>function myFunction(){}</code>) e cole o conteúdo do arquivo <strong>codigo_google_apps_script.js</strong> que foi gerado junto com este HTML.</div>
+    </div>
+    <div class="step-row"><span class="step-badge">3</span>
+      <div class="step-text">Clique no ícone de <strong>disquete</strong> (salvar) ou pressione <strong>Ctrl+S</strong>. Dê o nome <strong>Pautas</strong> ao projeto se pedir.</div>
+    </div>
+    <div class="step-row"><span class="step-badge">4</span>
+      <div class="step-text">Clique em <strong>Implantar → Nova implantação</strong>. Em "Tipo" selecione <strong>App da Web</strong>. Em "Executar como" selecione <strong>Eu (seu e-mail)</strong>. Em "Quem tem acesso" selecione <strong>Qualquer pessoa</strong>. Clique em <strong>Implantar</strong>.</div>
+    </div>
+    <div class="step-row"><span class="step-badge">5</span>
+      <div class="step-text">O Google vai pedir autorização — clique em <strong>Autorizar acesso</strong>, escolha sua conta e clique em <strong>Permitir</strong>. Pode aparecer um aviso de "app não verificado" — clique em <strong>Avançado → Acessar Pautas</strong>.</div>
+    </div>
+    <div class="step-row"><span class="step-badge">6</span>
+      <div class="step-text">Após implantar vai aparecer uma <strong>URL do app da Web</strong> — começa com <code>https://script.google.com/macros/s/...</code>. Copie essa URL e cole no campo acima. Clique em <strong>Salvar e conectar</strong>.</div>
+    </div>
+    <div class="step-row"><span class="step-badge">7</span>
+      <div class="step-text">Compartilhe este arquivo HTML (ou o link do GitHub Pages) com todos os advogados do escritório. Cada um cola a mesma URL do script e todos trabalham na mesma planilha.</div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+let CFG = JSON.parse(localStorage.getItem('pautas_cfg_v2') || '{}');
+let audiencias = [];
+let tempTests = [];
+
+// ── NAV ──────────────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  el.classList.add('active');
+  if (id === 'dashboard') renderDash();
+  if (id === 'pautas') renderPautas();
+  if (id === 'conferencia') renderConf();
+  if (id === 'config') checkConnStatus();
+}
+
+// ── TOAST ────────────────────────────────────────────────────────
+function toast(msg, dur=2800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+function setLoading(v) {
+  document.getElementById('loading').style.display = v ? 'flex' : 'none';
+}
+
+// ── API ──────────────────────────────────────────────────────────
+async function api(action, data={}) {
+  if (!CFG.url) return null;
+  const url = CFG.url + '?action=' + action;
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ action, ...data }),
+      headers: { 'Content-Type': 'text/plain' }
+    });
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error);
+    return json.result;
+  } catch(e) {
+    // fallback GET para getAll
+    if (action === 'getAll') {
+      try {
+        const res2 = await fetch(url);
+        const json2 = await res2.json();
+        if (json2.ok) return json2.result;
+      } catch(e2) {}
+    }
+    throw e;
+  }
+}
+
+async function carregarDados() {
+  if (!CFG.url) { renderAll(); return; }
+  setLoading(true);
+  try {
+    const result = await api('getAll');
+    audiencias = result || [];
+    renderAll();
+  } catch(e) {
+    toast('Erro ao carregar: ' + e.message);
+  } finally {
+    setLoading(false);
+  }
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────
+function fmtData(d) {
+  if (!d) return '';
+  const [y,m,dia] = d.split('-');
+  return `${dia}/${m}/${y}`;
+}
+function diasAte(dataStr) {
+  if (!dataStr) return 9999;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const d = new Date(dataStr + 'T00:00:00');
+  return Math.round((d - hoje) / 86400000);
+}
+function precisaTel(comarca, tests) {
+  if (!tests || tests.length === 0) return false;
+  const base = comarca.toLowerCase().replace(/[^a-z]/g, '');
+  return tests.some(t => {
+    const tc = (t.cidade||'').toLowerCase().replace(/[^a-z]/g, '');
+    return tc && tc !== base;
+  });
+}
+function statusBadge(a) {
+  if (a.statusPedido === 'nao-aplica') return '<span class="badge badge-gray">Sem necessidade de pedido</span>';
+  if (a.statusPedido === 'feito') return '<span class="badge badge-ok">✓ Pedido feito</span>';
+  return '<span class="badge badge-warn">⚠ Pedido pendente</span>';
+}
+
+// ── CARD HTML ─────────────────────────────────────────────────────
+function audCardHtml(a, showConf) {
+  const dias = diasAte(a.data);
+  const diasLabel = dias === 0 ? '<span class="badge badge-warn">Hoje</span>'
+    : dias === 1 ? '<span class="badge badge-warn">Amanhã</span>'
+    : dias > 0 && dias <= 7 ? `<span class="badge badge-info">Em ${dias} dias</span>` : '';
+
+  const tests = a.testemunhas && a.testemunhas.length > 0
+    ? `<div class="test-list">${a.testemunhas.map(t => {
+        const diff = t.cidade && a.comarca && t.cidade.toLowerCase().replace(/[^a-z]/g,'') !== a.comarca.toLowerCase().replace(/[^a-z]/g,'');
+        return `<div class="test-row">
+          <span class="test-name">${t.nome}${t.cpf ? ` <span style="color:var(--text-muted);font-size:11px">${t.cpf}</span>` : ''}</span>
+          <span class="test-city">${t.cidade||'—'}</span>
+          ${diff ? '<span class="badge badge-tel" style="font-size:11px">Telepresencial/SISDOV</span>' : ''}
+          <span class="test-parte">${t.parte}</span>
+          ${t.tel ? `<span class="test-parte">${t.tel}</span>` : ''}
+        </div>`;
+      }).join('')}</div>`
+    : '<span style="font-size:12px;color:var(--text-muted)">Nenhuma testemunha informada</span>';
+
+  const btnPedido = a.statusPedido === 'pendente'
+    ? `<button class="btn btn-sm btn-success" onclick="marcarPedido('${a.id}')">✓ Marcar pedido como feito</button>` : '';
+
+  const confBlock = showConf ? `
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;margin-top:4px">
+      <input type="checkbox" ${a.confFeita ? 'checked' : ''} onchange="toggleConf('${a.id}',this.checked)" style="width:auto">
+      Conferência realizada
+      ${a.confFeita && a.confResp ? `<span style="color:var(--text-muted);font-size:11px">por ${a.confResp}</span>` : ''}
+    </label>` : '';
+
+  return `<div class="aud-card ${a.statusPedido}">
+    <div class="aud-header">
+      <div>
+        <div class="aud-proc">${a.proc || 'Processo não informado'}</div>
+        <div class="aud-meta">📅 ${fmtData(a.data)}${a.hora ? ' às ' + a.hora : ''} &nbsp;·&nbsp; 📍 ${a.comarca}${a.vara ? ' — ' + a.vara : ''}</div>
+        <div class="aud-meta">${a.cliente ? 'Cliente: ' + a.cliente : ''}${a.adv ? ' · Adv: ' + a.adv : ''}</div>
+      </div>
+      <div class="aud-badges">
+        ${diasLabel} ${statusBadge(a)} <span class="badge badge-gray">${a.tipo}</span>
+      </div>
+    </div>
+    <hr class="divider">
+    ${tests}
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">
+      ${btnPedido}
+      <button class="btn btn-sm btn-danger" onclick="excluir('${a.id}')">Excluir</button>
+      ${confBlock}
+    </div>
+    ${a.obs ? `<div style="margin-top:6px;font-size:12px;color:var(--text-muted)">📝 ${a.obs}</div>` : ''}
+  </div>`;
+}
+
+// ── RENDERS ──────────────────────────────────────────────────────
+function renderAll() { renderDash(); renderPautas(); renderConf(); }
+
+function renderDash() {
+  const prox = audiencias.filter(a => { const d = diasAte(a.data); return d >= 0 && d <= 7; });
+  const pend = audiencias.filter(a => a.statusPedido === 'pendente');
+  document.getElementById('st-total').textContent = audiencias.length;
+  document.getElementById('st-pend').textContent = pend.length;
+  document.getElementById('st-prox').textContent = prox.length;
+  const sorted = [...audiencias].filter(a => diasAte(a.data) >= 0).sort((a,b) => a.data.localeCompare(b.data)).slice(0,6);
+  document.getElementById('dash-list').innerHTML = sorted.length === 0
+    ? '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Nenhuma audiência cadastrada ainda.</div></div>'
+    : sorted.map(a => audCardHtml(a, false)).join('');
+}
+
+function renderPautas() {
+  const fStatus = document.getElementById('f-status')?.value || '';
+  const fBusca = (document.getElementById('f-busca')?.value || '').toLowerCase();
+  let lista = audiencias.filter(a => {
+    if (fStatus && a.statusPedido !== fStatus) return false;
+    if (fBusca && !(a.proc||'').toLowerCase().includes(fBusca) && !(a.cliente||'').toLowerCase().includes(fBusca)) return false;
+    return true;
+  }).sort((a,b) => a.data.localeCompare(b.data));
+  document.getElementById('pautas-list').innerHTML = lista.length === 0
+    ? '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Nenhuma audiência encontrada.</div></div>'
+    : lista.map(a => audCardHtml(a, false)).join('');
+}
+
+function renderConf() {
+  const hoje = new Date();
+  document.getElementById('conf-data-label').textContent = fmtData(hoje.toISOString().split('T')[0]) + ' — ' + hoje.toLocaleDateString('pt-BR', {weekday:'long'});
+  const lista = audiencias.filter(a => { const d = diasAte(a.data); return d >= 0 && d <= 7; }).sort((a,b) => a.data.localeCompare(b.data));
+  const pend = lista.filter(a => a.statusPedido === 'pendente');
+  document.getElementById('cf-qtd').textContent = lista.length;
+  document.getElementById('cf-pend').textContent = pend.length;
+  document.getElementById('conf-list').innerHTML = lista.length === 0
+    ? '<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">Nenhuma audiência nos próximos 7 dias.</div></div>'
+    : lista.map(a => audCardHtml(a, true)).join('');
+}
+
+// ── FORMULÁRIO ───────────────────────────────────────────────────
+function addTest() {
+  const nome = document.getElementById('t-nome').value.trim();
+  if (!nome) { toast('Informe o nome da testemunha.'); return; }
+  tempTests.push({
+    nome, cpf: document.getElementById('t-cpf').value.trim(),
+    cidade: document.getElementById('t-cidade').value.trim(),
+    tel: document.getElementById('t-tel').value.trim(),
+    parte: document.getElementById('t-parte').value
+  });
+  ['t-nome','t-cpf','t-cidade','t-tel'].forEach(id => document.getElementById(id).value = '');
+  renderTempTests(); atualizarTelAlert();
+}
+function removeTest(i) { tempTests.splice(i,1); renderTempTests(); atualizarTelAlert(); }
+function renderTempTests() {
+  const el = document.getElementById('test-added-list');
+  el.innerHTML = tempTests.map((t,i) => `
+    <div class="test-added-row">
+      <span style="flex:1;font-weight:500">${t.nome}</span>
+      <span class="test-city">${t.cidade||'—'}</span>
+      <span class="test-parte">${t.parte}</span>
+      <button class="btn btn-sm btn-danger" onclick="removeTest(${i})">remover</button>
+    </div>`).join('');
+}
+function atualizarTelAlert() {
+  const comarca = document.getElementById('n-comarca')?.value || '';
+  const cidadeInput = document.getElementById('t-cidade')?.value || '';
+  const show = precisaTel(comarca, tempTests) || (cidadeInput && comarca && cidadeInput.toLowerCase().replace(/[^a-z]/g,'') !== comarca.toLowerCase().replace(/[^a-z]/g,''));
+  const el = document.getElementById('tel-alert');
+  if (el) el.style.display = show ? 'inline-flex' : 'none';
+}
+
+async function salvar() {
+  const proc = document.getElementById('n-proc').value.trim();
+  const data = document.getElementById('n-data').value;
+  const comarca = document.getElementById('n-comarca').value.trim();
+  if (!proc || !data || !comarca) { toast('Preencha: número do processo, data e comarca.'); return; }
+  const aud = {
+    id: Date.now().toString(), proc, data,
+    hora: document.getElementById('n-hora').value,
+    comarca, vara: document.getElementById('n-vara').value.trim(),
+    cliente: document.getElementById('n-cliente').value.trim(),
+    adv: document.getElementById('n-adv').value.trim(),
+    tipo: document.getElementById('n-tipo').value,
+    obs: document.getElementById('n-obs').value.trim(),
+    testemunhas: [...tempTests],
+    statusPedido: precisaTel(comarca, tempTests) ? 'pendente' : 'nao-aplica',
+    confFeita: false, confResp: '', confData: ''
+  };
+  setLoading(true);
+  try {
+    await api('save', { data: aud });
+    audiencias = audiencias.filter(a => a.id !== aud.id);
+    audiencias.push(aud);
+    limpar(); renderAll();
+    toast('Audiência salva com sucesso!');
+  } catch(e) {
+    toast('Erro ao salvar: ' + e.message);
+  } finally { setLoading(false); }
+}
+
+function limpar() {
+  ['n-proc','n-data','n-hora','n-comarca','n-vara','n-cliente','n-adv','n-obs'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('n-tipo').selectedIndex = 0;
+  tempTests = []; renderTempTests(); atualizarTelAlert();
+}
+
+// ── ACTIONS ──────────────────────────────────────────────────────
+async function marcarPedido(id) {
+  const a = audiencias.find(x => x.id === id);
+  if (!a) return;
+  a.statusPedido = 'feito';
+  setLoading(true);
+  try { await api('save', { data: a }); renderAll(); toast('Pedido marcado como feito!'); }
+  catch(e) { toast('Erro: ' + e.message); }
+  finally { setLoading(false); }
+}
+
+async function toggleConf(id, val) {
+  const a = audiencias.find(x => x.id === id);
+  if (!a) return;
+  a.confFeita = val;
+  a.confResp = document.getElementById('conf-resp').value || '';
+  a.confData = new Date().toISOString();
+  try { await api('save', { data: a }); renderConf(); }
+  catch(e) { toast('Erro ao salvar: ' + e.message); }
+}
+
+async function excluir(id) {
+  if (!confirm('Excluir esta audiência?')) return;
+  setLoading(true);
+  try {
+    await api('delete', { id });
+    audiencias = audiencias.filter(a => a.id !== id);
+    renderAll(); toast('Audiência excluída.');
+  } catch(e) { toast('Erro ao excluir: ' + e.message); }
+  finally { setLoading(false); }
+}
+
+// ── CONFIG ────────────────────────────────────────────────────────
+function salvarConfig() {
+  const url = document.getElementById('cfg-url').value.trim();
+  if (!url) { toast('Cole a URL do Apps Script.'); return; }
+  CFG = { url };
+  localStorage.setItem('pautas_cfg_v2', JSON.stringify(CFG));
+  checkConnStatus();
+  carregarDados();
+  toast('Configuração salva! Carregando dados...');
+}
+
+async function testarConexao() {
+  if (!CFG.url) { toast('Salve a URL primeiro.'); return; }
+  setLoading(true);
+  try {
+    const r = await api('getAll');
+    toast('✓ Conexão OK! ' + (r ? r.length : 0) + ' audiência(s) encontrada(s).');
+  } catch(e) {
+    toast('Erro na conexão: ' + e.message);
+  } finally { setLoading(false); }
+}
+
+function checkConnStatus() {
+  const dot = document.getElementById('conn-dot');
+  const txt = document.getElementById('conn-text');
+  if (CFG.url) {
+    dot.className = 'status-dot connected';
+    txt.textContent = 'Conectado — ' + CFG.url.substring(0, 40) + '...';
+    document.getElementById('cfg-url').value = CFG.url;
+  } else {
+    dot.className = 'status-dot disconnected';
+    txt.textContent = 'Não configurado';
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+checkConnStatus();
+carregarDados();
+</script>
+</body>
+</html>
