@@ -3,132 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pauta de Audiências</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Pautas de Audiência</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #F7F6F2; --surface: #FFFFFF; --border: #E2E0D8; --border-strong: #C8C5BB;
-  --text: #1A1916; --text-muted: #7A7870; --accent: #1B4F3A; --accent-light: #E8F0EC; --accent-text: #1B4F3A;
-  --warn-bg: #FEF6E4; --warn-border: #F5C842; --warn-text: #7A5A00;
-  --danger-bg: #FEF0EF; --danger-border: #E8857E; --danger-text: #8B1F1A;
-  --success-bg: #EBF5EE; --success-border: #6BBF87; --success-text: #1B5E35;
-  --info-bg: #EEF3FB; --info-border: #7AAAE8; --info-text: #1A3D7A;
-  --radius: 8px; --radius-lg: 12px; --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
+  --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a;
+  --border: #2e3349; --border2: #3d4360;
+  --text: #e8eaf0; --text-muted: #7b82a0; --text-dim: #4a5075;
+  --accent: #5b8af0; --accent-dim: #1e2d52;
+  --green: #3ecf8e; --green-dim: #0d2e20;
+  --yellow: #f5c842; --yellow-dim: #2e2506;
+  --red: #f07070; --red-dim: #2e1010;
+  --orange: #f5a26a; --orange-dim: #2e1a06;
+  --radius: 8px; --radius-lg: 12px;
+  --font: 'Inter', sans-serif;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; min-height: 100vh; }
-.app { display: flex; min-height: 100vh; }
-.sidebar { width: 220px; background: var(--surface); border-right: 1px solid var(--border); padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 4px; position: fixed; top: 0; left: 0; height: 100vh; }
-.sidebar-logo { font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: .04em; text-transform: uppercase; padding: 0 8px 1.25rem; border-bottom: 1px solid var(--border); margin-bottom: .5rem; }
-.nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: var(--radius); cursor: pointer; font-size: 13px; color: var(--text-muted); transition: all .15s; border: none; background: none; width: 100%; text-align: left; }
-.nav-item:hover { background: var(--bg); color: var(--text); }
-.nav-item.active { background: var(--accent-light); color: var(--accent-text); font-weight: 500; }
-.nav-icon { font-size: 16px; width: 20px; text-align: center; }
-.main { margin-left: 220px; flex: 1; padding: 2rem; max-width: 960px; }
-.page { display: none; } .page.active { display: block; }
-.page-title { font-size: 20px; font-weight: 600; margin-bottom: 1.5rem; }
-.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem; }
-.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; }
-.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin-bottom: 6px; }
-.stat-value { font-size: 26px; font-weight: 600; font-family: var(--mono); }
-.stat-value.warn { color: #B07D00; } .stat-value.ok { color: var(--success-text); }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 12px; }
-.card-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); margin-bottom: 1rem; }
-.form-group { margin-bottom: 14px; }
-.form-row { display: grid; gap: 12px; }
-.form-row.col2 { grid-template-columns: 1fr 1fr; } .form-row.col3 { grid-template-columns: 1fr 1fr 1fr; }
-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
-input, select, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 11px; font-size: 13px; font-family: var(--font); color: var(--text); transition: border .15s; }
-input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); background: var(--surface); }
-textarea { resize: vertical; min-height: 64px; }
-.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 13px; font-family: var(--font); color: var(--text); transition: all .15s; font-weight: 500; }
-.btn:hover { background: var(--bg); }
-.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-.btn-primary:hover { background: #143d2c; }
-.btn-sm { padding: 4px 10px; font-size: 12px; }
-.btn-danger { color: var(--danger-text); border-color: var(--danger-border); }
-.btn-danger:hover { background: var(--danger-bg); }
-.btn-success { color: var(--success-text); border-color: var(--success-border); }
-.btn-success:hover { background: var(--success-bg); }
-.btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1rem; }
-.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; }
-.badge-warn { background: var(--warn-bg); color: var(--warn-text); border: 1px solid var(--warn-border); }
-.badge-ok { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
-.badge-info { background: var(--info-bg); color: var(--info-text); border: 1px solid var(--info-border); }
-.badge-gray { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
-.badge-tel { background: #FFF0E6; color: #8B3A00; border: 1px solid #F5A66A; }
-.aud-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem 1.4rem; margin-bottom: 10px; }
-.aud-card.pendente { border-left: 3px solid var(--warn-border); }
-.aud-card.feito { border-left: 3px solid var(--success-border); }
-.aud-card.nao-aplica { border-left: 3px solid var(--border-strong); }
-.aud-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-.aud-proc { font-family: var(--mono); font-size: 13px; font-weight: 500; }
-.aud-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-.aud-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-.divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
-.test-list { display: flex; flex-direction: column; gap: 6px; }
-.test-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.test-name { font-weight: 500; flex: 1; }
-.test-city { color: var(--text-muted); background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1px 7px; font-size: 11px; }
-.test-parte { color: var(--text-muted); font-size: 11px; }
-.test-form-area { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-top: 10px; }
-.test-added-row { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 5px; }
-.filter-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; }
-.filter-bar select, .filter-bar input { width: auto; }
-.conf-day-header { background: var(--accent); color: #fff; border-radius: var(--radius-lg); padding: 1rem 1.5rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; }
-.conf-day-title { font-size: 15px; font-weight: 600; }
-.conf-day-sub { font-size: 12px; opacity: .8; margin-top: 2px; }
-.conf-resp-row { display: flex; align-items: center; gap: 8px; }
-.conf-resp-row label { margin: 0; color: rgba(255,255,255,.8); text-transform: none; letter-spacing: 0; font-size: 12px; }
-.conf-resp-row input { width: 160px; background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.3); color: #fff; }
-.conf-resp-row input::placeholder { color: rgba(255,255,255,.5); }
-.empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
-.empty-icon { font-size: 32px; margin-bottom: 8px; opacity: .4; }
-.config-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 16px; }
-.config-section h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-.config-section p { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.7; }
-.step-badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: var(--accent); color: #fff; border-radius: 50%; font-size: 11px; font-weight: 600; margin-right: 6px; flex-shrink: 0; }
-.step-row { display: flex; align-items: flex-start; gap: 4px; margin-bottom: 10px; font-size: 13px; }
-.step-text { flex: 1; color: var(--text-muted); line-height: 1.7; }
-.step-text strong { color: var(--text); }
-code { font-family: var(--mono); background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 12px; }
-.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-.status-dot.connected { background: #3DAB68; } .status-dot.disconnected { background: #ccc; }
-.conn-status { font-size: 13px; display: flex; align-items: center; padding: 8px 12px; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 12px; }
-.link { color: var(--accent); text-decoration: underline; cursor: pointer; font-size: 13px; }
-.toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: #fff; padding: 10px 18px; border-radius: var(--radius); font-size: 13px; z-index: 9999; opacity: 0; transition: opacity .3s; pointer-events: none; max-width: 300px; }
-.toast.show { opacity: 1; }
-.loading-overlay { position: fixed; inset: 0; background: rgba(247,246,242,.8); display: flex; align-items: center; justify-content: center; z-index: 999; display: none; }
-.loading-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem 2rem; text-align: center; font-size: 13px; color: var(--text-muted); }
-@keyframes spin { to { transform: rotate(360deg); } }
-.spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; margin-bottom: 8px; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+/* LAYOUT */
+.app{display:flex;min-height:100vh}
+.sidebar{width:210px;background:var(--surface);border-right:1px solid var(--border);padding:1.25rem .75rem;display:flex;flex-direction:column;gap:3px;position:fixed;top:0;left:0;height:100vh}
+.logo{font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;padding:0 10px 1rem;border-bottom:1px solid var(--border);margin-bottom:.5rem}
+.nav-btn{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius);cursor:pointer;font-size:13px;color:var(--text-muted);border:none;background:none;width:100%;text-align:left;transition:all .15s}
+.nav-btn:hover{background:var(--surface2);color:var(--text)}
+.nav-btn.active{background:var(--accent-dim);color:var(--accent)}
+.nav-btn svg{width:16px;height:16px;flex-shrink:0;opacity:.7}
+.nav-btn.active svg{opacity:1}
+.main{margin-left:210px;flex:1;padding:2rem;max-width:940px}
+/* PAGES */
+.page{display:none}.page.active{display:block}
+.page-title{font-size:18px;font-weight:600;margin-bottom:1.5rem;color:var(--text)}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:.875rem 1.125rem}
+.stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:5px}
+.stat-val{font-size:24px;font-weight:600}
+.stat-val.yellow{color:var(--yellow)}.stat-val.green{color:var(--green)}
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-bottom:10px}
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);margin-bottom:1rem}
+/* FORM */
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 11px;font-size:13px;font-family:var(--font);color:var(--text);transition:border .15s}
+.fg input:focus,.fg select,.fg textarea:focus{outline:none;border-color:var(--accent)}
+.fg select{cursor:pointer}.fg textarea{resize:vertical;min-height:60px}
+.fg select option{background:var(--surface2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 15px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-size:13px;font-family:var(--font);color:var(--text);transition:all .15s;font-weight:500}
+.btn:hover{border-color:var(--border2);background:var(--surface)}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:#4a79df;border-color:#4a79df}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-green{color:var(--green);border-color:#1d4a35}
+.btn-green:hover{background:var(--green-dim)}
+.btn-red{color:var(--red);border-color:#4a2020}
+.btn-red:hover{background:var(--red-dim)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:1rem}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500}
+.b-yellow{background:var(--yellow-dim);color:var(--yellow);border:1px solid #4a3a08}
+.b-green{background:var(--green-dim);color:var(--green);border:1px solid #1a4a30}
+.b-blue{background:var(--accent-dim);color:var(--accent);border:1px solid #253878}
+.b-gray{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)}
+.b-orange{background:var(--orange-dim);color:var(--orange);border:1px solid #4a2a08}
+/* AUD CARD */
+.aud-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:10px;transition:border-color .15s}
+.aud-card:hover{border-color:var(--border2)}
+.aud-card.pendente{border-left:3px solid var(--yellow)}
+.aud-card.feito{border-left:3px solid var(--green)}
+.aud-card.nao-aplica{border-left:3px solid var(--border2)}
+.aud-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.aud-proc{font-size:13px;font-weight:600;font-family:monospace;color:var(--text)}
+.aud-meta{font-size:12px;color:var(--text-muted);margin-top:3px}
+.aud-badges{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.divider{border:none;border-top:1px solid var(--border);margin:10px 0}
+.test-row{display:flex;align-items:center;gap:8px;font-size:12px;padding:3px 0}
+.test-name{font-weight:500;flex:1}
+.test-city{color:var(--text-muted);background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:1px 7px;font-size:11px}
+.test-parte{color:var(--text-dim);font-size:11px}
+/* CONF HEADER */
+.conf-header{background:linear-gradient(135deg,#1e2d52,#162240);border:1px solid #2a3a6a;border-radius:var(--radius-lg);padding:1rem 1.5rem;margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center}
+.conf-title{font-size:15px;font-weight:600}
+.conf-sub{font-size:12px;color:var(--text-muted);margin-top:2px}
+.conf-resp{display:flex;align-items:center;gap:8px}
+.conf-resp label{font-size:12px;color:var(--text-muted);margin:0;text-transform:none;letter-spacing:0}
+.conf-resp input{width:150px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--text);border-radius:var(--radius);padding:6px 10px;font-size:13px;font-family:var(--font)}
+/* TEST FORM */
+.test-form{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:.875rem;margin-top:10px}
+.test-form-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:10px}
+.test-added-row{display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px}
+/* FILTER */
+.filter-bar{display:flex;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center}
+.filter-bar select,.filter-bar input{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:7px 10px;font-size:13px;font-family:var(--font);width:auto}
+.filter-bar select option{background:var(--surface)}
+/* CONFIG */
+.cfg-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-bottom:14px}
+.cfg-section h3{font-size:14px;font-weight:600;margin-bottom:.5rem}
+.cfg-section p{font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:12px}
+.step{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:13px}
+.step-n{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--accent);color:#fff;border-radius:50%;font-size:11px;font-weight:600;flex-shrink:0;margin-top:1px}
+.step-text{flex:1;color:var(--text-muted);line-height:1.7}
+.step-text strong{color:var(--text)}
+code{font-family:monospace;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:12px;color:var(--accent)}
+.conn-bar{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;margin-bottom:12px;font-size:13px}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot.on{background:var(--green)}.dot.off{background:var(--text-dim)}
+/* EMPTY */
+.empty{text-align:center;padding:3rem 1rem;color:var(--text-muted)}
+.empty-icon{font-size:28px;margin-bottom:8px;opacity:.4}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:var(--radius);font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;max-width:320px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.toast.show{opacity:1}
+/* LOADING */
+.overlay{position:fixed;inset:0;background:rgba(15,17,23,.7);display:none;align-items:center;justify-content:center;z-index:999}
+.overlay.show{display:flex}
+.spin-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem 2rem;text-align:center;color:var(--text-muted);font-size:13px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
+/* CHECK */
+.check-label{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;margin-top:6px}
+.check-label input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--accent)}
 </style>
 </head>
 <body>
-
-<div class="loading-overlay" id="loading">
-  <div class="loading-box"><div class="spinner"></div><br>Carregando...</div>
-</div>
-
+<div class="overlay" id="overlay"><div class="spin-box"><div class="spinner"></div>Aguarde...</div></div>
 <div class="app">
+
+<!-- SIDEBAR -->
 <nav class="sidebar">
-  <div class="sidebar-logo">⚖ Pautas</div>
-  <button class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">◉</span> Painel</button>
-  <button class="nav-item" onclick="showPage('nova',this)"><span class="nav-icon">＋</span> Nova audiência</button>
-  <button class="nav-item" onclick="showPage('pautas',this)"><span class="nav-icon">≡</span> Todas as pautas</button>
-  <button class="nav-item" onclick="showPage('conferencia',this)"><span class="nav-icon">✓</span> Conferência do dia</button>
-  <button class="nav-item" onclick="showPage('config',this)" style="margin-top:auto"><span class="nav-icon">⚙</span> Configurar</button>
+  <div class="logo">⚖ Pautas</div>
+  <button class="nav-btn active" onclick="nav('dashboard',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Painel
+  </button>
+  <button class="nav-btn" onclick="nav('nova',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    Nova audiência
+  </button>
+  <button class="nav-btn" onclick="nav('pautas',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    Todas as pautas
+  </button>
+  <button class="nav-btn" onclick="nav('conf',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    Conferência do dia
+  </button>
+  <button class="nav-btn" onclick="nav('config',this)" style="margin-top:auto">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Configurar
+  </button>
 </nav>
 
+<!-- MAIN -->
 <main class="main">
 
 <!-- DASHBOARD -->
-<div id="page-dashboard" class="page active">
+<div id="p-dashboard" class="page active">
   <div class="page-title">Painel</div>
-  <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label">Total de audiências</div><div class="stat-value" id="st-total">—</div></div>
-    <div class="stat-card"><div class="stat-label">Pedidos pendentes</div><div class="stat-value warn" id="st-pend">—</div></div>
-    <div class="stat-card"><div class="stat-label">Próximos 7 dias</div><div class="stat-value ok" id="st-prox">—</div></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Total</div><div class="stat-val" id="st-tot">—</div></div>
+    <div class="stat"><div class="stat-label">Pedidos pendentes</div><div class="stat-val yellow" id="st-pend">—</div></div>
+    <div class="stat"><div class="stat-label">Próximos 7 dias</div><div class="stat-val green" id="st-prox">—</div></div>
   </div>
   <div class="card">
     <div class="card-title">Próximas audiências</div>
@@ -136,133 +174,109 @@ code { font-family: var(--mono); background: var(--bg); border: 1px solid var(--
   </div>
 </div>
 
-<!-- NOVA AUDIÊNCIA -->
-<div id="page-nova" class="page">
+<!-- NOVA -->
+<div id="p-nova" class="page">
   <div class="page-title">Nova audiência</div>
   <div class="card">
     <div class="card-title">Dados do processo</div>
-    <div class="form-row col2">
-      <div class="form-group"><label>Número do processo</label><input type="text" id="n-proc" placeholder="0000000-00.0000.0.00.0000"></div>
-      <div class="form-group"><label>Tipo de audiência</label>
-        <select id="n-tipo"><option>Instrução e julgamento</option><option>Conciliação</option><option>UNA</option><option>Outro</option></select>
-      </div>
+    <div class="grid2">
+      <div class="fg"><label>Número do processo</label><input type="text" id="n-proc" placeholder="0000000-00.0000.0.00.0000"></div>
+      <div class="fg"><label>Tipo</label><select id="n-tipo"><option>Instrução e julgamento</option><option>Conciliação</option><option>UNA</option><option>Outro</option></select></div>
     </div>
-    <div class="form-row col3">
-      <div class="form-group"><label>Data</label><input type="date" id="n-data"></div>
-      <div class="form-group"><label>Horário</label><input type="time" id="n-hora"></div>
-      <div class="form-group"><label>Comarca / cidade</label><input type="text" id="n-comarca" placeholder="Ex.: Salvador/BA" oninput="atualizarTelAlert()"></div>
+    <div class="grid3">
+      <div class="fg"><label>Data</label><input type="date" id="n-data"></div>
+      <div class="fg"><label>Horário</label><input type="time" id="n-hora"></div>
+      <div class="fg"><label>Comarca</label><input type="text" id="n-comarca" placeholder="Ex.: Salvador/BA" oninput="updTel()"></div>
     </div>
-    <div class="form-row col2">
-      <div class="form-group"><label>Vara / juízo</label><input type="text" id="n-vara" placeholder="Ex.: 3ª Vara do Trabalho"></div>
-      <div class="form-group"><label>Advogado responsável</label><input type="text" id="n-adv" placeholder="Nome do advogado"></div>
+    <div class="grid2">
+      <div class="fg"><label>Vara / juízo</label><input type="text" id="n-vara" placeholder="Ex.: 3ª Vara do Trabalho"></div>
+      <div class="fg"><label>Advogado responsável</label><input type="text" id="n-adv" placeholder="Nome"></div>
     </div>
-    <div class="form-group"><label>Parte / cliente</label><input type="text" id="n-cliente" placeholder="Nome do cliente"></div>
-    <div class="form-group"><label>Observações</label><textarea id="n-obs" placeholder="Notas gerais..."></textarea></div>
+    <div class="fg"><label>Cliente / parte</label><input type="text" id="n-cliente" placeholder="Nome do cliente"></div>
+    <div class="fg"><label>Observações</label><textarea id="n-obs" placeholder="Notas gerais..."></textarea></div>
   </div>
   <div class="card">
     <div class="card-title">Testemunhas</div>
-    <div id="test-added-list"></div>
-    <div id="tel-alert" style="display:none;margin-bottom:10px" class="badge badge-tel">⚠ Testemunha fora da comarca — necessário pedido de oitiva telepresencial / SISDOV</div>
-    <div class="test-form-area">
-      <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted);margin-bottom:10px">Adicionar testemunha</div>
-      <div class="form-row col2">
-        <div class="form-group"><label>Nome completo</label><input type="text" id="t-nome" placeholder="Nome da testemunha"></div>
-        <div class="form-group"><label>CPF</label><input type="text" id="t-cpf" placeholder="000.000.000-00"></div>
+    <div id="tests-added"></div>
+    <div id="tel-alert" style="display:none;margin-bottom:10px" class="badge b-orange">⚠ Testemunha fora da comarca — necessário pedido telepresencial / SISDOV</div>
+    <div class="test-form">
+      <div class="test-form-title">Adicionar testemunha</div>
+      <div class="grid2">
+        <div class="fg"><label>Nome</label><input type="text" id="t-nome" placeholder="Nome completo"></div>
+        <div class="fg"><label>CPF</label><input type="text" id="t-cpf" placeholder="000.000.000-00"></div>
       </div>
-      <div class="form-row col3">
-        <div class="form-group"><label>Cidade / UF</label><input type="text" id="t-cidade" placeholder="Ex.: Jequié/BA" oninput="atualizarTelAlert()"></div>
-        <div class="form-group"><label>Telefone</label><input type="text" id="t-tel" placeholder="(00) 00000-0000"></div>
-        <div class="form-group"><label>Arrolada por</label><select id="t-parte"><option>Reclamante</option><option>Reclamada</option></select></div>
+      <div class="grid3">
+        <div class="fg"><label>Cidade / UF</label><input type="text" id="t-cidade" placeholder="Ex.: Jequié/BA" oninput="updTel()"></div>
+        <div class="fg"><label>Telefone</label><input type="text" id="t-tel" placeholder="(00) 00000-0000"></div>
+        <div class="fg"><label>Arrolada por</label><select id="t-parte"><option>Reclamante</option><option>Reclamada</option></select></div>
       </div>
-      <button class="btn btn-sm" onclick="addTest()">＋ Adicionar</button>
+      <button class="btn btn-sm" onclick="addTest()">+ Adicionar</button>
     </div>
   </div>
-  <div class="btn-group">
+  <div class="btn-row">
     <button class="btn btn-primary" onclick="salvar()">Salvar audiência</button>
     <button class="btn" onclick="limpar()">Limpar</button>
   </div>
 </div>
 
 <!-- PAUTAS -->
-<div id="page-pautas" class="page">
+<div id="p-pautas" class="page">
   <div class="page-title">Todas as pautas</div>
   <div class="filter-bar">
-    <select id="f-status" onchange="renderPautas()">
+    <select id="f-st" onchange="renderPautas()">
       <option value="">Todos os status</option>
       <option value="pendente">Pedido pendente</option>
       <option value="feito">Pedido feito</option>
       <option value="nao-aplica">Sem necessidade</option>
     </select>
-    <input type="text" id="f-busca" placeholder="Buscar processo ou cliente..." style="width:240px" oninput="renderPautas()">
-    <button class="btn btn-sm" onclick="carregarDados()">↺ Atualizar</button>
+    <input type="text" id="f-q" placeholder="Buscar processo ou cliente..." style="width:230px" oninput="renderPautas()">
+    <button class="btn btn-sm" onclick="load()">↺ Atualizar</button>
   </div>
   <div id="pautas-list"></div>
 </div>
 
 <!-- CONFERÊNCIA -->
-<div id="page-conferencia" class="page">
-  <div class="conf-day-header">
+<div id="p-conf" class="page">
+  <div class="conf-header">
     <div>
-      <div class="conf-day-title">Conferência do dia</div>
-      <div class="conf-day-sub" id="conf-data-label"></div>
+      <div class="conf-title">Conferência do dia</div>
+      <div class="conf-sub" id="conf-sub"></div>
     </div>
-    <div class="conf-resp-row">
+    <div class="conf-resp">
       <label>Responsável:</label>
       <input type="text" id="conf-resp" placeholder="Seu nome">
     </div>
   </div>
-  <div class="stats-grid" style="grid-template-columns:1fr 1fr">
-    <div class="stat-card"><div class="stat-label">Audiências (próx. 7 dias)</div><div class="stat-value" id="cf-qtd">—</div></div>
-    <div class="stat-card"><div class="stat-label">Ações pendentes</div><div class="stat-value warn" id="cf-pend">—</div></div>
+  <div class="stats" style="grid-template-columns:1fr 1fr">
+    <div class="stat"><div class="stat-label">Próximos 7 dias</div><div class="stat-val" id="cf-qt">—</div></div>
+    <div class="stat"><div class="stat-label">Ações pendentes</div><div class="stat-val yellow" id="cf-pd">—</div></div>
   </div>
   <div id="conf-list"></div>
 </div>
 
 <!-- CONFIG -->
-<div id="page-config" class="page">
+<div id="p-config" class="page">
   <div class="page-title">Configurar</div>
-
-  <div class="config-section">
-    <h3>Status da conexão</h3>
-    <div class="conn-status">
-      <span class="status-dot" id="conn-dot"></span>
-      <span id="conn-text">Não configurado</span>
-    </div>
-    <div class="form-group">
-      <label>URL do Google Apps Script (Web App)</label>
+  <div class="cfg-section">
+    <h3>Conexão com Google Sheets</h3>
+    <div class="conn-bar"><span class="dot" id="conn-dot"></span><span id="conn-txt">Não configurado</span></div>
+    <div class="fg"><label>URL do Google Apps Script</label>
       <input type="text" id="cfg-url" placeholder="https://script.google.com/macros/s/.../exec">
     </div>
-    <div class="btn-group" style="margin-top:0">
-      <button class="btn btn-primary" onclick="salvarConfig()">Salvar e conectar</button>
-      <button class="btn" onclick="testarConexao()">Testar conexão</button>
+    <div class="btn-row" style="margin-top:0">
+      <button class="btn btn-primary" onclick="saveConfig()">Salvar e conectar</button>
+      <button class="btn" onclick="testConn()">Testar conexão</button>
     </div>
   </div>
-
-  <div class="config-section">
-    <h3>Passo a passo — configurar uma única vez (≈ 5 minutos)</h3>
-    <p>Sem OAuth, sem Client ID, sem erro 400. Funciona com qualquer conta Google.</p>
-
-    <div class="step-row"><span class="step-badge">1</span>
-      <div class="step-text">Abra sua planilha no Google Sheets. No menu superior clique em <strong>Extensões → Apps Script</strong>.</div>
-    </div>
-    <div class="step-row"><span class="step-badge">2</span>
-      <div class="step-text">Apague todo o código que já está lá (o <code>function myFunction(){}</code>) e cole o conteúdo do arquivo <strong>codigo_google_apps_script.js</strong> que foi gerado junto com este HTML.</div>
-    </div>
-    <div class="step-row"><span class="step-badge">3</span>
-      <div class="step-text">Clique no ícone de <strong>disquete</strong> (salvar) ou pressione <strong>Ctrl+S</strong>. Dê o nome <strong>Pautas</strong> ao projeto se pedir.</div>
-    </div>
-    <div class="step-row"><span class="step-badge">4</span>
-      <div class="step-text">Clique em <strong>Implantar → Nova implantação</strong>. Em "Tipo" selecione <strong>App da Web</strong>. Em "Executar como" selecione <strong>Eu (seu e-mail)</strong>. Em "Quem tem acesso" selecione <strong>Qualquer pessoa</strong>. Clique em <strong>Implantar</strong>.</div>
-    </div>
-    <div class="step-row"><span class="step-badge">5</span>
-      <div class="step-text">O Google vai pedir autorização — clique em <strong>Autorizar acesso</strong>, escolha sua conta e clique em <strong>Permitir</strong>. Pode aparecer um aviso de "app não verificado" — clique em <strong>Avançado → Acessar Pautas</strong>.</div>
-    </div>
-    <div class="step-row"><span class="step-badge">6</span>
-      <div class="step-text">Após implantar vai aparecer uma <strong>URL do app da Web</strong> — começa com <code>https://script.google.com/macros/s/...</code>. Copie essa URL e cole no campo acima. Clique em <strong>Salvar e conectar</strong>.</div>
-    </div>
-    <div class="step-row"><span class="step-badge">7</span>
-      <div class="step-text">Compartilhe este arquivo HTML (ou o link do GitHub Pages) com todos os advogados do escritório. Cada um cola a mesma URL do script e todos trabalham na mesma planilha.</div>
-    </div>
+  <div class="cfg-section">
+    <h3>Passo a passo — fazer só uma vez</h3>
+    <p>Use seu Gmail pessoal (@gmail.com). Leva menos de 5 minutos.</p>
+    <div class="step"><span class="step-n">1</span><div class="step-text">Abra a planilha no Google Sheets. Clique em <strong>Extensões → Apps Script</strong>.</div></div>
+    <div class="step"><span class="step-n">2</span><div class="step-text">Apague tudo que estiver lá e cole o conteúdo do arquivo <strong>codigo_apps_script_v2.js</strong>. Salve com <strong>Ctrl+S</strong>.</div></div>
+    <div class="step"><span class="step-n">3</span><div class="step-text">Clique em <strong>Implantar → Nova implantação</strong>. Na engrenagem ⚙ selecione <strong>App da Web</strong>. Preencha: <strong>Executar como: Eu</strong> · <strong>Quem tem acesso: Qualquer pessoa</strong>. Clique em <strong>Implantar</strong>.</div></div>
+    <div class="step"><span class="step-n">4</span><div class="step-text">Se aparecer aviso de "app não verificado" clique em <strong>Avançado → Acessar (nome do projeto)</strong> e depois em <strong>Permitir</strong>.</div></div>
+    <div class="step"><span class="step-n">5</span><div class="step-text">Copie a URL gerada (começa com <code>https://script.google.com/macros/s/...</code>) e cole no campo acima. Clique em <strong>Salvar e conectar</strong>.</div></div>
+    <div class="step"><span class="step-n">6</span><div class="step-text">Compartilhe este link com a equipe: <strong id="site-url" style="color:var(--accent)">—</strong>. Cada pessoa abre no navegador e cola a mesma URL do script.</div></div>
   </div>
 </div>
 
@@ -271,329 +285,219 @@ code { font-family: var(--mono); background: var(--bg); border: 1px solid var(--
 <div class="toast" id="toast"></div>
 
 <script>
-let CFG = JSON.parse(localStorage.getItem('pautas_cfg_v2') || '{}');
-let audiencias = [];
-let tempTests = [];
+let CFG = JSON.parse(localStorage.getItem('pautas_v3')||'{}');
+let AUD = [];
+let TEMP = [];
 
-// ── NAV ──────────────────────────────────────────────────────────
-function showPage(id, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
+// NAV
+function nav(id, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('p-'+id).classList.add('active');
   el.classList.add('active');
-  if (id === 'dashboard') renderDash();
-  if (id === 'pautas') renderPautas();
-  if (id === 'conferencia') renderConf();
-  if (id === 'config') checkConnStatus();
+  if(id==='dashboard') renderDash();
+  if(id==='pautas') renderPautas();
+  if(id==='conf') renderConf();
+  if(id==='config') initConfig();
 }
 
-// ── TOAST ────────────────────────────────────────────────────────
-function toast(msg, dur=2800) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), dur);
+// TOAST
+function toast(msg,dur=2800){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+function loading(v){document.getElementById('overlay').classList.toggle('show',v)}
+
+// API
+async function api(action,data={}){
+  if(!CFG.url) throw new Error('URL não configurada');
+  const url=CFG.url+(action==='getAll'?'?action=getAll':'');
+  const opts = action==='getAll'
+    ? {method:'GET'}
+    : {method:'POST',body:JSON.stringify({action,...data}),headers:{'Content-Type':'text/plain'}};
+  const res = await fetch(url,opts);
+  const json = await res.json();
+  if(!json.ok) throw new Error(json.error||'Erro desconhecido');
+  return json.result;
 }
 
-function setLoading(v) {
-  document.getElementById('loading').style.display = v ? 'flex' : 'none';
+async function load(){
+  if(!CFG.url){renderAll();return;}
+  loading(true);
+  try{ AUD=await api('getAll')||[]; renderAll(); }
+  catch(e){ toast('Erro ao carregar: '+e.message); }
+  finally{ loading(false); }
 }
 
-// ── API ──────────────────────────────────────────────────────────
-async function api(action, data={}) {
-  if (!CFG.url) return null;
-  const url = CFG.url + '?action=' + action;
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({ action, ...data }),
-      headers: { 'Content-Type': 'text/plain' }
-    });
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.error);
-    return json.result;
-  } catch(e) {
-    // fallback GET para getAll
-    if (action === 'getAll') {
-      try {
-        const res2 = await fetch(url);
-        const json2 = await res2.json();
-        if (json2.ok) return json2.result;
-      } catch(e2) {}
-    }
-    throw e;
-  }
+// HELPERS
+function fmt(d){if(!d)return'';const[y,m,dia]=d.split('-');return`${dia}/${m}/${y}`;}
+function dias(d){if(!d)return 9999;const h=new Date();h.setHours(0,0,0,0);return Math.round((new Date(d+'T00:00:00')-h)/86400000);}
+function needsTel(comarca,tests){
+  if(!tests||!tests.length)return false;
+  const b=comarca.toLowerCase().replace(/[^a-z]/g,'');
+  return tests.some(t=>{const c=(t.cidade||'').toLowerCase().replace(/[^a-z]/g,'');return c&&c!==b;});
+}
+function statusBadge(a){
+  if(a.statusPedido==='nao-aplica') return '<span class="badge b-gray">Sem necessidade</span>';
+  if(a.statusPedido==='feito') return '<span class="badge b-green">✓ Pedido feito</span>';
+  return '<span class="badge b-yellow">⚠ Pedido pendente</span>';
 }
 
-async function carregarDados() {
-  if (!CFG.url) { renderAll(); return; }
-  setLoading(true);
-  try {
-    const result = await api('getAll');
-    audiencias = result || [];
-    renderAll();
-  } catch(e) {
-    toast('Erro ao carregar: ' + e.message);
-  } finally {
-    setLoading(false);
-  }
-}
-
-// ── HELPERS ──────────────────────────────────────────────────────
-function fmtData(d) {
-  if (!d) return '';
-  const [y,m,dia] = d.split('-');
-  return `${dia}/${m}/${y}`;
-}
-function diasAte(dataStr) {
-  if (!dataStr) return 9999;
-  const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const d = new Date(dataStr + 'T00:00:00');
-  return Math.round((d - hoje) / 86400000);
-}
-function precisaTel(comarca, tests) {
-  if (!tests || tests.length === 0) return false;
-  const base = comarca.toLowerCase().replace(/[^a-z]/g, '');
-  return tests.some(t => {
-    const tc = (t.cidade||'').toLowerCase().replace(/[^a-z]/g, '');
-    return tc && tc !== base;
-  });
-}
-function statusBadge(a) {
-  if (a.statusPedido === 'nao-aplica') return '<span class="badge badge-gray">Sem necessidade de pedido</span>';
-  if (a.statusPedido === 'feito') return '<span class="badge badge-ok">✓ Pedido feito</span>';
-  return '<span class="badge badge-warn">⚠ Pedido pendente</span>';
-}
-
-// ── CARD HTML ─────────────────────────────────────────────────────
-function audCardHtml(a, showConf) {
-  const dias = diasAte(a.data);
-  const diasLabel = dias === 0 ? '<span class="badge badge-warn">Hoje</span>'
-    : dias === 1 ? '<span class="badge badge-warn">Amanhã</span>'
-    : dias > 0 && dias <= 7 ? `<span class="badge badge-info">Em ${dias} dias</span>` : '';
-
-  const tests = a.testemunhas && a.testemunhas.length > 0
-    ? `<div class="test-list">${a.testemunhas.map(t => {
-        const diff = t.cidade && a.comarca && t.cidade.toLowerCase().replace(/[^a-z]/g,'') !== a.comarca.toLowerCase().replace(/[^a-z]/g,'');
-        return `<div class="test-row">
-          <span class="test-name">${t.nome}${t.cpf ? ` <span style="color:var(--text-muted);font-size:11px">${t.cpf}</span>` : ''}</span>
-          <span class="test-city">${t.cidade||'—'}</span>
-          ${diff ? '<span class="badge badge-tel" style="font-size:11px">Telepresencial/SISDOV</span>' : ''}
-          <span class="test-parte">${t.parte}</span>
-          ${t.tel ? `<span class="test-parte">${t.tel}</span>` : ''}
-        </div>`;
+// CARD
+function cardHtml(a,showConf){
+  const d=dias(a.data);
+  const dl=d===0?'<span class="badge b-yellow">Hoje</span>':d===1?'<span class="badge b-yellow">Amanhã</span>':d>0&&d<=7?`<span class="badge b-blue">Em ${d} dias</span>`:'';
+  const tests=a.testemunhas&&a.testemunhas.length
+    ?`<div>${a.testemunhas.map(t=>{
+        const diff=t.cidade&&a.comarca&&t.cidade.toLowerCase().replace(/[^a-z]/g,'')!==a.comarca.toLowerCase().replace(/[^a-z]/g,'');
+        return`<div class="test-row"><span class="test-name">${t.nome}${t.cpf?` <span style="color:var(--text-dim);font-size:11px">${t.cpf}</span>`:''}</span><span class="test-city">${t.cidade||'—'}</span>${diff?'<span class="badge b-orange" style="font-size:10px">Telepresencial/SISDOV</span>':''}<span class="test-parte">${t.parte}</span>${t.tel?`<span class="test-parte">${t.tel}</span>`:''}</div>`;
       }).join('')}</div>`
-    : '<span style="font-size:12px;color:var(--text-muted)">Nenhuma testemunha informada</span>';
-
-  const btnPedido = a.statusPedido === 'pendente'
-    ? `<button class="btn btn-sm btn-success" onclick="marcarPedido('${a.id}')">✓ Marcar pedido como feito</button>` : '';
-
-  const confBlock = showConf ? `
-    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;margin-top:4px">
-      <input type="checkbox" ${a.confFeita ? 'checked' : ''} onchange="toggleConf('${a.id}',this.checked)" style="width:auto">
-      Conferência realizada
-      ${a.confFeita && a.confResp ? `<span style="color:var(--text-muted);font-size:11px">por ${a.confResp}</span>` : ''}
-    </label>` : '';
-
-  return `<div class="aud-card ${a.statusPedido}">
-    <div class="aud-header">
+    :'<span style="font-size:12px;color:var(--text-muted)">Nenhuma testemunha</span>';
+  const btnP=a.statusPedido==='pendente'?`<button class="btn btn-sm btn-green" onclick="marcarFeito('${a.id}')">✓ Pedido feito</button>`:'';
+  const conf=showConf?`<label class="check-label"><input type="checkbox" ${a.confFeita?'checked':''} onchange="toggleConf('${a.id}',this.checked)"> Conferência realizada ${a.confFeita&&a.confResp?`<span style="color:var(--text-dim);font-size:11px">por ${a.confResp}</span>`:''}</label>`:'';
+  return`<div class="aud-card ${a.statusPedido}">
+    <div class="aud-head">
       <div>
-        <div class="aud-proc">${a.proc || 'Processo não informado'}</div>
-        <div class="aud-meta">📅 ${fmtData(a.data)}${a.hora ? ' às ' + a.hora : ''} &nbsp;·&nbsp; 📍 ${a.comarca}${a.vara ? ' — ' + a.vara : ''}</div>
-        <div class="aud-meta">${a.cliente ? 'Cliente: ' + a.cliente : ''}${a.adv ? ' · Adv: ' + a.adv : ''}</div>
+        <div class="aud-proc">${a.proc||'Sem número'}</div>
+        <div class="aud-meta">📅 ${fmt(a.data)}${a.hora?' às '+a.hora:''} · 📍 ${a.comarca}${a.vara?' — '+a.vara:''}</div>
+        <div class="aud-meta">${a.cliente?'Cliente: '+a.cliente:''}${a.adv?' · Adv: '+a.adv:''}</div>
       </div>
-      <div class="aud-badges">
-        ${diasLabel} ${statusBadge(a)} <span class="badge badge-gray">${a.tipo}</span>
-      </div>
+      <div class="aud-badges">${dl}${statusBadge(a)}<span class="badge b-gray">${a.tipo}</span></div>
     </div>
     <hr class="divider">
     ${tests}
     <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">
-      ${btnPedido}
-      <button class="btn btn-sm btn-danger" onclick="excluir('${a.id}')">Excluir</button>
-      ${confBlock}
+      ${btnP}<button class="btn btn-sm btn-red" onclick="excluir('${a.id}')">Excluir</button>${conf}
     </div>
-    ${a.obs ? `<div style="margin-top:6px;font-size:12px;color:var(--text-muted)">📝 ${a.obs}</div>` : ''}
+    ${a.obs?`<div style="margin-top:6px;font-size:12px;color:var(--text-muted)">📝 ${a.obs}</div>`:''}
   </div>`;
 }
 
-// ── RENDERS ──────────────────────────────────────────────────────
-function renderAll() { renderDash(); renderPautas(); renderConf(); }
+// RENDERS
+function renderAll(){renderDash();renderPautas();renderConf();}
 
-function renderDash() {
-  const prox = audiencias.filter(a => { const d = diasAte(a.data); return d >= 0 && d <= 7; });
-  const pend = audiencias.filter(a => a.statusPedido === 'pendente');
-  document.getElementById('st-total').textContent = audiencias.length;
-  document.getElementById('st-pend').textContent = pend.length;
-  document.getElementById('st-prox').textContent = prox.length;
-  const sorted = [...audiencias].filter(a => diasAte(a.data) >= 0).sort((a,b) => a.data.localeCompare(b.data)).slice(0,6);
-  document.getElementById('dash-list').innerHTML = sorted.length === 0
-    ? '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Nenhuma audiência cadastrada ainda.</div></div>'
-    : sorted.map(a => audCardHtml(a, false)).join('');
+function renderDash(){
+  const prox=AUD.filter(a=>{const d=dias(a.data);return d>=0&&d<=7;});
+  const pend=AUD.filter(a=>a.statusPedido==='pendente');
+  document.getElementById('st-tot').textContent=AUD.length;
+  document.getElementById('st-pend').textContent=pend.length;
+  document.getElementById('st-prox').textContent=prox.length;
+  const sorted=[...AUD].filter(a=>dias(a.data)>=0).sort((a,b)=>a.data.localeCompare(b.data)).slice(0,6);
+  document.getElementById('dash-list').innerHTML=sorted.length?sorted.map(a=>cardHtml(a,false)).join(''):'<div class="empty"><div class="empty-icon">📋</div>Nenhuma audiência cadastrada.</div>';
 }
 
-function renderPautas() {
-  const fStatus = document.getElementById('f-status')?.value || '';
-  const fBusca = (document.getElementById('f-busca')?.value || '').toLowerCase();
-  let lista = audiencias.filter(a => {
-    if (fStatus && a.statusPedido !== fStatus) return false;
-    if (fBusca && !(a.proc||'').toLowerCase().includes(fBusca) && !(a.cliente||'').toLowerCase().includes(fBusca)) return false;
+function renderPautas(){
+  const fs=document.getElementById('f-st')?.value||'';
+  const fq=(document.getElementById('f-q')?.value||'').toLowerCase();
+  const lista=AUD.filter(a=>{
+    if(fs&&a.statusPedido!==fs)return false;
+    if(fq&&!(a.proc||'').toLowerCase().includes(fq)&&!(a.cliente||'').toLowerCase().includes(fq))return false;
     return true;
-  }).sort((a,b) => a.data.localeCompare(b.data));
-  document.getElementById('pautas-list').innerHTML = lista.length === 0
-    ? '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Nenhuma audiência encontrada.</div></div>'
-    : lista.map(a => audCardHtml(a, false)).join('');
+  }).sort((a,b)=>a.data.localeCompare(b.data));
+  document.getElementById('pautas-list').innerHTML=lista.length?lista.map(a=>cardHtml(a,false)).join(''):'<div class="empty"><div class="empty-icon">📋</div>Nenhuma audiência encontrada.</div>';
 }
 
-function renderConf() {
-  const hoje = new Date();
-  document.getElementById('conf-data-label').textContent = fmtData(hoje.toISOString().split('T')[0]) + ' — ' + hoje.toLocaleDateString('pt-BR', {weekday:'long'});
-  const lista = audiencias.filter(a => { const d = diasAte(a.data); return d >= 0 && d <= 7; }).sort((a,b) => a.data.localeCompare(b.data));
-  const pend = lista.filter(a => a.statusPedido === 'pendente');
-  document.getElementById('cf-qtd').textContent = lista.length;
-  document.getElementById('cf-pend').textContent = pend.length;
-  document.getElementById('conf-list').innerHTML = lista.length === 0
-    ? '<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">Nenhuma audiência nos próximos 7 dias.</div></div>'
-    : lista.map(a => audCardHtml(a, true)).join('');
+function renderConf(){
+  const hoje=new Date();
+  document.getElementById('conf-sub').textContent=fmt(hoje.toISOString().split('T')[0])+' — '+hoje.toLocaleDateString('pt-BR',{weekday:'long'});
+  const lista=AUD.filter(a=>{const d=dias(a.data);return d>=0&&d<=7;}).sort((a,b)=>a.data.localeCompare(b.data));
+  const pend=lista.filter(a=>a.statusPedido==='pendente');
+  document.getElementById('cf-qt').textContent=lista.length;
+  document.getElementById('cf-pd').textContent=pend.length;
+  document.getElementById('conf-list').innerHTML=lista.length?lista.map(a=>cardHtml(a,true)).join(''):'<div class="empty"><div class="empty-icon">✅</div>Nenhuma audiência nos próximos 7 dias.</div>';
 }
 
-// ── FORMULÁRIO ───────────────────────────────────────────────────
-function addTest() {
-  const nome = document.getElementById('t-nome').value.trim();
-  if (!nome) { toast('Informe o nome da testemunha.'); return; }
-  tempTests.push({
-    nome, cpf: document.getElementById('t-cpf').value.trim(),
-    cidade: document.getElementById('t-cidade').value.trim(),
-    tel: document.getElementById('t-tel').value.trim(),
-    parte: document.getElementById('t-parte').value
-  });
-  ['t-nome','t-cpf','t-cidade','t-tel'].forEach(id => document.getElementById(id).value = '');
-  renderTempTests(); atualizarTelAlert();
+// FORM
+function addTest(){
+  const nome=document.getElementById('t-nome').value.trim();
+  if(!nome){toast('Informe o nome da testemunha.');return;}
+  TEMP.push({nome,cpf:document.getElementById('t-cpf').value.trim(),cidade:document.getElementById('t-cidade').value.trim(),tel:document.getElementById('t-tel').value.trim(),parte:document.getElementById('t-parte').value});
+  ['t-nome','t-cpf','t-cidade','t-tel'].forEach(id=>document.getElementById(id).value='');
+  renderTemp();updTel();
 }
-function removeTest(i) { tempTests.splice(i,1); renderTempTests(); atualizarTelAlert(); }
-function renderTempTests() {
-  const el = document.getElementById('test-added-list');
-  el.innerHTML = tempTests.map((t,i) => `
-    <div class="test-added-row">
-      <span style="flex:1;font-weight:500">${t.nome}</span>
-      <span class="test-city">${t.cidade||'—'}</span>
-      <span class="test-parte">${t.parte}</span>
-      <button class="btn btn-sm btn-danger" onclick="removeTest(${i})">remover</button>
-    </div>`).join('');
+function rmTest(i){TEMP.splice(i,1);renderTemp();updTel();}
+function renderTemp(){
+  document.getElementById('tests-added').innerHTML=TEMP.map((t,i)=>`<div class="test-added-row"><span style="flex:1;font-weight:500">${t.nome}</span><span class="test-city">${t.cidade||'—'}</span><span class="test-parte">${t.parte}</span><button class="btn btn-sm btn-red" onclick="rmTest(${i})">remover</button></div>`).join('');
 }
-function atualizarTelAlert() {
-  const comarca = document.getElementById('n-comarca')?.value || '';
-  const cidadeInput = document.getElementById('t-cidade')?.value || '';
-  const show = precisaTel(comarca, tempTests) || (cidadeInput && comarca && cidadeInput.toLowerCase().replace(/[^a-z]/g,'') !== comarca.toLowerCase().replace(/[^a-z]/g,''));
-  const el = document.getElementById('tel-alert');
-  if (el) el.style.display = show ? 'inline-flex' : 'none';
+function updTel(){
+  const comarca=document.getElementById('n-comarca')?.value||'';
+  const cidade=document.getElementById('t-cidade')?.value||'';
+  const show=needsTel(comarca,TEMP)||(cidade&&comarca&&cidade.toLowerCase().replace(/[^a-z]/g,'')!==comarca.toLowerCase().replace(/[^a-z]/g,''));
+  document.getElementById('tel-alert').style.display=show?'inline-flex':'none';
 }
 
-async function salvar() {
-  const proc = document.getElementById('n-proc').value.trim();
-  const data = document.getElementById('n-data').value;
-  const comarca = document.getElementById('n-comarca').value.trim();
-  if (!proc || !data || !comarca) { toast('Preencha: número do processo, data e comarca.'); return; }
-  const aud = {
-    id: Date.now().toString(), proc, data,
-    hora: document.getElementById('n-hora').value,
-    comarca, vara: document.getElementById('n-vara').value.trim(),
-    cliente: document.getElementById('n-cliente').value.trim(),
-    adv: document.getElementById('n-adv').value.trim(),
-    tipo: document.getElementById('n-tipo').value,
-    obs: document.getElementById('n-obs').value.trim(),
-    testemunhas: [...tempTests],
-    statusPedido: precisaTel(comarca, tempTests) ? 'pendente' : 'nao-aplica',
-    confFeita: false, confResp: '', confData: ''
-  };
-  setLoading(true);
-  try {
-    await api('save', { data: aud });
-    audiencias = audiencias.filter(a => a.id !== aud.id);
-    audiencias.push(aud);
-    limpar(); renderAll();
-    toast('Audiência salva com sucesso!');
-  } catch(e) {
-    toast('Erro ao salvar: ' + e.message);
-  } finally { setLoading(false); }
+async function salvar(){
+  const proc=document.getElementById('n-proc').value.trim();
+  const data=document.getElementById('n-data').value;
+  const comarca=document.getElementById('n-comarca').value.trim();
+  if(!proc||!data||!comarca){toast('Preencha: processo, data e comarca.');return;}
+  const aud={id:Date.now().toString(),proc,data,hora:document.getElementById('n-hora').value,comarca,vara:document.getElementById('n-vara').value.trim(),cliente:document.getElementById('n-cliente').value.trim(),adv:document.getElementById('n-adv').value.trim(),tipo:document.getElementById('n-tipo').value,obs:document.getElementById('n-obs').value.trim(),testemunhas:[...TEMP],statusPedido:needsTel(comarca,TEMP)?'pendente':'nao-aplica',confFeita:false,confResp:'',confData:''};
+  loading(true);
+  try{
+    await api('save',{data:aud});
+    AUD=AUD.filter(a=>a.id!==aud.id); AUD.push(aud);
+    limpar(); renderAll(); toast('Audiência salva!');
+  }catch(e){toast('Erro: '+e.message);}
+  finally{loading(false);}
 }
 
-function limpar() {
-  ['n-proc','n-data','n-hora','n-comarca','n-vara','n-cliente','n-adv','n-obs'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
-  document.getElementById('n-tipo').selectedIndex = 0;
-  tempTests = []; renderTempTests(); atualizarTelAlert();
+function limpar(){
+  ['n-proc','n-data','n-hora','n-comarca','n-vara','n-cliente','n-adv','n-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('n-tipo').selectedIndex=0;
+  TEMP=[];renderTemp();updTel();
 }
 
-// ── ACTIONS ──────────────────────────────────────────────────────
-async function marcarPedido(id) {
-  const a = audiencias.find(x => x.id === id);
-  if (!a) return;
-  a.statusPedido = 'feito';
-  setLoading(true);
-  try { await api('save', { data: a }); renderAll(); toast('Pedido marcado como feito!'); }
-  catch(e) { toast('Erro: ' + e.message); }
-  finally { setLoading(false); }
+// ACTIONS
+async function marcarFeito(id){
+  const a=AUD.find(x=>x.id===id);if(!a)return;
+  a.statusPedido='feito';loading(true);
+  try{await api('save',{data:a});renderAll();toast('Pedido marcado como feito!');}
+  catch(e){toast('Erro: '+e.message);}
+  finally{loading(false);}
 }
 
-async function toggleConf(id, val) {
-  const a = audiencias.find(x => x.id === id);
-  if (!a) return;
-  a.confFeita = val;
-  a.confResp = document.getElementById('conf-resp').value || '';
-  a.confData = new Date().toISOString();
-  try { await api('save', { data: a }); renderConf(); }
-  catch(e) { toast('Erro ao salvar: ' + e.message); }
+async function toggleConf(id,val){
+  const a=AUD.find(x=>x.id===id);if(!a)return;
+  a.confFeita=val; a.confResp=document.getElementById('conf-resp').value||''; a.confData=new Date().toISOString();
+  try{await api('save',{data:a});renderConf();}catch(e){toast('Erro: '+e.message);}
 }
 
-async function excluir(id) {
-  if (!confirm('Excluir esta audiência?')) return;
-  setLoading(true);
-  try {
-    await api('delete', { id });
-    audiencias = audiencias.filter(a => a.id !== id);
-    renderAll(); toast('Audiência excluída.');
-  } catch(e) { toast('Erro ao excluir: ' + e.message); }
-  finally { setLoading(false); }
+async function excluir(id){
+  if(!confirm('Excluir esta audiência?'))return;
+  loading(true);
+  try{await api('delete',{id});AUD=AUD.filter(a=>a.id!==id);renderAll();toast('Excluída.');}
+  catch(e){toast('Erro: '+e.message);}
+  finally{loading(false);}
 }
 
-// ── CONFIG ────────────────────────────────────────────────────────
-function salvarConfig() {
-  const url = document.getElementById('cfg-url').value.trim();
-  if (!url) { toast('Cole a URL do Apps Script.'); return; }
-  CFG = { url };
-  localStorage.setItem('pautas_cfg_v2', JSON.stringify(CFG));
-  checkConnStatus();
-  carregarDados();
-  toast('Configuração salva! Carregando dados...');
+// CONFIG
+function saveConfig(){
+  const url=document.getElementById('cfg-url').value.trim();
+  if(!url){toast('Cole a URL do Apps Script.');return;}
+  CFG={url};localStorage.setItem('pautas_v3',JSON.stringify(CFG));
+  initConfig();load();toast('Conectado! Carregando dados...');
 }
 
-async function testarConexao() {
-  if (!CFG.url) { toast('Salve a URL primeiro.'); return; }
-  setLoading(true);
-  try {
-    const r = await api('getAll');
-    toast('✓ Conexão OK! ' + (r ? r.length : 0) + ' audiência(s) encontrada(s).');
-  } catch(e) {
-    toast('Erro na conexão: ' + e.message);
-  } finally { setLoading(false); }
+async function testConn(){
+  if(!CFG.url){toast('Cole e salve a URL primeiro.');return;}
+  loading(true);
+  try{const r=await api('getAll');toast('✓ Conexão OK! '+r.length+' audiência(s).');}
+  catch(e){toast('Erro: '+e.message);}
+  finally{loading(false);}
 }
 
-function checkConnStatus() {
-  const dot = document.getElementById('conn-dot');
-  const txt = document.getElementById('conn-text');
-  if (CFG.url) {
-    dot.className = 'status-dot connected';
-    txt.textContent = 'Conectado — ' + CFG.url.substring(0, 40) + '...';
-    document.getElementById('cfg-url').value = CFG.url;
-  } else {
-    dot.className = 'status-dot disconnected';
-    txt.textContent = 'Não configurado';
-  }
+function initConfig(){
+  const dot=document.getElementById('conn-dot');
+  const txt=document.getElementById('conn-txt');
+  if(CFG.url){dot.className='dot on';txt.textContent='Conectado — '+CFG.url.substring(0,45)+'...';document.getElementById('cfg-url').value=CFG.url;}
+  else{dot.className='dot off';txt.textContent='Não configurado';}
+  const su=document.getElementById('site-url');
+  if(su)su.textContent=location.href;
 }
 
-// ── INIT ──────────────────────────────────────────────────────────
-checkConnStatus();
-carregarDados();
+// INIT
+initConfig();load();
 </script>
 </body>
 </html>
