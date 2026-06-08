@@ -181,7 +181,7 @@ code{font-family:monospace;background:var(--surface2);border:1px solid var(--bor
     <div class="card-title">Dados do processo</div>
     <div class="grid2">
       <div class="fg"><label>Número do processo</label><input type="text" id="n-proc" placeholder="0000000-00.0000.0.00.0000"></div>
-      <div class="fg"><label>Tipo</label><select id="n-tipo"><option>Instrução e julgamento</option><option>Conciliação</option><option>UNA</option><option>Outro</option></select></div>
+      <div class="fg"><label>Tipo</label><select id="n-tipo"><option>Instrução e julgamento</option><option>Conciliação</option><option>UNA</option><option>Pauta</option><option>Outro</option></select></div>
     </div>
     <div class="grid3">
       <div class="fg"><label>Data</label><input type="date" id="n-data"></div>
@@ -192,6 +192,7 @@ code{font-family:monospace;background:var(--surface2);border:1px solid var(--bor
       <div class="fg"><label>Vara / juízo</label><input type="text" id="n-vara" placeholder="Ex.: 3ª Vara do Trabalho"></div>
       <div class="fg"><label>Advogado responsável</label><input type="text" id="n-adv" placeholder="Nome"></div>
     </div>
+    <div class="fg"><label>Modalidade da audiência</label><select id="n-modalidade" onchange="updTel()"><option value="presencial">Presencial</option><option value="telepresencial">Telepresencial</option><option value="hibrida">Híbrida</option></select></div>
     <div class="fg"><label>Cliente / parte</label><input type="text" id="n-cliente" placeholder="Nome do cliente"></div>
     <div class="fg"><label>Observações</label><textarea id="n-obs" placeholder="Notas gerais..."></textarea></div>
   </div>
@@ -333,7 +334,8 @@ async function load(){
 // HELPERS
 function fmt(d){if(!d)return'';const[y,m,dia]=d.split('-');return`${dia}/${m}/${y}`;}
 function dias(d){if(!d)return 9999;const h=new Date();h.setHours(0,0,0,0);return Math.round((new Date(d+'T00:00:00')-h)/86400000);}
-function needsTel(comarca,tests){
+function needsTel(comarca,tests,modalidade){
+  if(modalidade==='telepresencial')return false;
   if(!tests||!tests.length)return false;
   const b=comarca.toLowerCase().replace(/[^a-z]/g,'');
   return tests.some(t=>{const c=(t.cidade||'').toLowerCase().replace(/[^a-z]/g,'');return c&&c!==b;});
@@ -356,6 +358,7 @@ function cardHtml(a,showConf){
     :'<span style="font-size:12px;color:var(--text-muted)">Nenhuma testemunha</span>';
   const btnP=a.statusPedido==='pendente'?`<button class="btn btn-sm btn-green" onclick="marcarFeito('${a.id}')">✓ Pedido feito</button>`:'';
   const conf=showConf?`<label class="check-label"><input type="checkbox" ${a.confFeita?'checked':''} onchange="toggleConf('${a.id}',this.checked)"> Conferência realizada ${a.confFeita&&a.confResp?`<span style="color:var(--text-dim);font-size:11px">por ${a.confResp}</span>`:''}</label>`:'';
+  const modLabel=a.modalidade==='telepresencial'?'<span class="badge b-blue">Telepresencial</span>':a.modalidade==='hibrida'?'<span class="badge b-orange">Híbrida</span>':'<span class="badge b-gray">Presencial</span>';
   return`<div class="aud-card ${a.statusPedido}">
     <div class="aud-head">
       <div>
@@ -363,7 +366,7 @@ function cardHtml(a,showConf){
         <div class="aud-meta">📅 ${fmt(a.data)}${a.hora?' às '+a.hora:''} · 📍 ${a.comarca}${a.vara?' — '+a.vara:''}</div>
         <div class="aud-meta">${a.cliente?'Cliente: '+a.cliente:''}${a.adv?' · Adv: '+a.adv:''}</div>
       </div>
-      <div class="aud-badges">${dl}${statusBadge(a)}<span class="badge b-gray">${a.tipo}</span></div>
+      <div class="aud-badges">${dl}${statusBadge(a)}${modLabel}<span class="badge b-gray">${a.tipo}</span></div>
     </div>
     <hr class="divider">
     ${tests}
@@ -423,7 +426,8 @@ function renderTemp(){
 function updTel(){
   const comarca=document.getElementById('n-comarca')?.value||'';
   const cidade=document.getElementById('t-cidade')?.value||'';
-  const show=needsTel(comarca,TEMP)||(cidade&&comarca&&cidade.toLowerCase().replace(/[^a-z]/g,'')!==comarca.toLowerCase().replace(/[^a-z]/g,''));
+  const modalidade=document.getElementById('n-modalidade')?.value||'presencial';
+  const show=modalidade!=='telepresencial'&&(needsTel(comarca,TEMP,modalidade)||(cidade&&comarca&&cidade.toLowerCase().replace(/[^a-z]/g,'')!==comarca.toLowerCase().replace(/[^a-z]/g,'')));
   document.getElementById('tel-alert').style.display=show?'inline-flex':'none';
 }
 
@@ -432,7 +436,8 @@ async function salvar(){
   const data=document.getElementById('n-data').value;
   const comarca=document.getElementById('n-comarca').value.trim();
   if(!proc||!data||!comarca){toast('Preencha: processo, data e comarca.');return;}
-  const aud={id:Date.now().toString(),proc,data,hora:document.getElementById('n-hora').value,comarca,vara:document.getElementById('n-vara').value.trim(),cliente:document.getElementById('n-cliente').value.trim(),adv:document.getElementById('n-adv').value.trim(),tipo:document.getElementById('n-tipo').value,obs:document.getElementById('n-obs').value.trim(),testemunhas:[...TEMP],statusPedido:needsTel(comarca,TEMP)?'pendente':'nao-aplica',confFeita:false,confResp:'',confData:''};
+  const modalidade=document.getElementById('n-modalidade').value;
+  const aud={id:Date.now().toString(),proc,data,hora:document.getElementById('n-hora').value,comarca,vara:document.getElementById('n-vara').value.trim(),cliente:document.getElementById('n-cliente').value.trim(),adv:document.getElementById('n-adv').value.trim(),tipo:document.getElementById('n-tipo').value,modalidade,obs:document.getElementById('n-obs').value.trim(),testemunhas:[...TEMP],statusPedido:needsTel(comarca,TEMP,modalidade)?'pendente':'nao-aplica',confFeita:false,confResp:'',confData:''};
   loading(true);
   try{
     await api('save',{data:aud});
@@ -445,6 +450,7 @@ async function salvar(){
 function limpar(){
   ['n-proc','n-data','n-hora','n-comarca','n-vara','n-cliente','n-adv','n-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('n-tipo').selectedIndex=0;
+  document.getElementById('n-modalidade').selectedIndex=0;
   TEMP=[];renderTemp();updTel();
 }
 
